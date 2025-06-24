@@ -11,12 +11,7 @@ const adminService = async (loginInfo) => {
       name: data.name,
       loginId: data.loginId,
     };
-    let loginPeriod = null;
-    if (data.remember) {
-      loginPeriod = 7;
-    } else {
-      loginPeriod = 1;
-    }
+    const loginPeriod = data.remember ? data.remember : 1;
     // 生成token
     const token = jwt.sign(data, md5(process.env.JWT_SECRET), {
       expiresIn: 60 * 60 * 24 * loginPeriod,
