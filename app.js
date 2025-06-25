@@ -1,8 +1,11 @@
-var createError = require("http-errors");
-var express = require("express");
-var path = require("path");
-var cookieParser = require("cookie-parser");
-var logger = require("morgan");
+const createError = require("http-errors");
+const express = require("express");
+const path = require("path");
+const cookieParser = require("cookie-parser");
+const logger = require("morgan");
+const { expressjwt: jwt } = require("express-jwt");
+const md5 = require("md5");
+const { ForbiddenError } = require("./utils/error");
 
 // 加载环境变量
 require("dotenv").config();
@@ -10,22 +13,35 @@ require("dotenv").config();
 // 连接数据库
 require("./dao/db");
 
-var indexRouter = require("./routes/index");
-var usersRouter = require("./routes/users");
-var adminRouter = require("./routes/admin");
+// 加载路由页面
+const indexRouter = require("./routes/index");
+const usersRouter = require("./routes/users");
+// 加载路由API
+const adminRouter = require("./routes/admin");
 
-var app = express();
+// 创建express实例
+const app = express();
+
+// 使用jwt中间件
+app.use(
+  jwt({
+    secret: md5(process.env.JWT_SECRET),
+    algorithms: ["HS256"],
+  }).unless({ path: ["/api/admin/login"] })
+);
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 
+// 中间件
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
+// 使用路由
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use("/api/admin", adminRouter);
@@ -37,13 +53,11 @@ app.use(function (req, res, next) {
 
 // error handler
 app.use(function (err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get("env") === "development" ? err : {};
-
-  // render the error page
-  res.status(err.status || 500);
-  res.render("error");
+  if (err.name === "UnauthorizedError") {
+    res.json(new ForbiddenError("token无效或者已过期").toResponseJson());
+  } else {
+    next(err);
+  }
 });
 
 module.exports = app;
