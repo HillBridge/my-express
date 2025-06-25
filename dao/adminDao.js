@@ -16,4 +16,12 @@ const loginDao = async (loginInfo) => {
   });
 };
 
-module.exports = { loginDao };
+const updateUserDao = async (newUserInfo) => {
+  return await adminModel.update(newUserInfo, {
+    where: {
+      id: newUserInfo.id,
+    },
+  });
+};
+
+module.exports = { loginDao, updateUserDao };

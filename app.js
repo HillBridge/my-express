@@ -5,10 +5,12 @@ const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const { expressjwt: jwt } = require("express-jwt");
 const md5 = require("md5");
-const { ForbiddenError } = require("./utils/error");
+const { ForbiddenError, ServiceError } = require("./utils/error");
 
 // 加载环境变量
 require("dotenv").config();
+// 使用express-async-errors中间件
+require("express-async-errors");
 
 // 连接数据库
 require("./dao/db");
@@ -55,6 +57,8 @@ app.use(function (req, res, next) {
 app.use(function (err, req, res, next) {
   if (err.name === "UnauthorizedError") {
     res.json(new ForbiddenError("token无效或者已过期").toResponseJson());
+  } else if (err instanceof ServiceError) {
+    res.json(err.toResponseJson());
   } else {
     next(err);
   }

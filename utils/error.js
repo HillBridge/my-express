@@ -21,7 +21,7 @@ class UploadError extends ServiceError {
 // 禁止访问错误
 class ForbiddenError extends ServiceError {
   constructor(message) {
-    super(message, 403);
+    super(message, 401);
   }
 }
 

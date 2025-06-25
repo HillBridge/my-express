@@ -1,8 +1,9 @@
 const md5 = require("md5");
-const { loginDao } = require("../dao/adminDao");
+const { loginDao, updateUserDao } = require("../dao/adminDao");
 const jwt = require("jsonwebtoken");
+const { ValidationError } = require("../utils/error");
 
-const adminService = async (loginInfo) => {
+const loginService = async (loginInfo) => {
   loginInfo.loginPwd = md5(loginInfo.loginPwd);
   let data = await loginDao(loginInfo);
   if (data && data?.dataValues) {
@@ -27,4 +28,23 @@ const adminService = async (loginInfo) => {
   };
 };
 
-module.exports = { adminService };
+const updateUserService = async (userInfo) => {
+  // 先验证旧的密码是否正确
+  const dataInfo = await loginDao({
+    loginId: userInfo.loginId,
+    loginPwd: md5(userInfo.oldPwd),
+  });
+  if (dataInfo && dataInfo?.dataValues) {
+    const newUserInfo = {
+      name: userInfo.name,
+      loginId: userInfo.loginId,
+      loginPwd: md5(userInfo.newPwd),
+      id: dataInfo.dataValues.id,
+    };
+    return await updateUserDao(newUserInfo);
+  } else {
+    throw new ValidationError("旧密码不正确");
+  }
+};
+
+module.exports = { loginService, updateUserService };
