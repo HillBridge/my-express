@@ -8,6 +8,12 @@ const {
 const { formatResponse, analysisToken } = require("../utils/tool");
 
 router.post("/login", async function (req, res, next) {
+  const captcha = req.body.captcha?.toLowerCase();
+  const sessionCaptcha = req.session.captcha?.toLowerCase();
+  if (captcha !== sessionCaptcha) {
+    res.json(formatResponse(500, "验证码错误"));
+    return;
+  }
   const loginInfo = req.body;
   const result = await loginService(loginInfo);
   if (result?.token) {
@@ -39,9 +45,8 @@ router.put("/userInfo", async function (req, res, next) {
 router.get("/captcha", async function (req, res, next) {
   const result = await getCaptchaService();
 
+  // 应该与uid绑定吧
   req.session.captcha = result.text;
-
-  console.log("req.session.captcha", req.session.captcha);
 
   res.type("svg");
   res.send(result.data);
