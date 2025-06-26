@@ -2,6 +2,7 @@ const md5 = require("md5");
 const { loginDao, updateUserDao } = require("../dao/adminDao");
 const jwt = require("jsonwebtoken");
 const { ValidationError } = require("../utils/error");
+const svgCaptcha = require("svg-captcha");
 
 const loginService = async (loginInfo) => {
   loginInfo.loginPwd = md5(loginInfo.loginPwd);
@@ -47,4 +48,15 @@ const updateUserService = async (userInfo) => {
   }
 };
 
-module.exports = { loginService, updateUserService };
+const getCaptchaService = async () => {
+  var captcha = svgCaptcha.create({
+    size: 4,
+    ignoreChars: "0o1i",
+    noise: 2,
+    color: true,
+    background: "#cc9966",
+  });
+  return captcha;
+};
+
+module.exports = { loginService, updateUserService, getCaptchaService };

@@ -1,6 +1,10 @@
 const express = require("express");
 const router = express.Router();
-const { loginService, updateUserService } = require("../service/adminService");
+const {
+  loginService,
+  updateUserService,
+  getCaptchaService,
+} = require("../service/adminService");
 const { formatResponse, analysisToken } = require("../utils/tool");
 
 router.post("/login", async function (req, res, next) {
@@ -30,6 +34,17 @@ router.put("/userInfo", async function (req, res, next) {
   } else {
     res.json(formatResponse(500, "更新用户信息失败", result));
   }
+});
+
+router.get("/captcha", async function (req, res, next) {
+  const result = await getCaptchaService();
+
+  req.session.captcha = result.text;
+
+  console.log("req.session.captcha", req.session.captcha);
+
+  res.type("svg");
+  res.send(result.data);
 });
 
 module.exports = router;

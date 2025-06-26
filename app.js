@@ -5,6 +5,7 @@ const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const { expressjwt: jwt } = require("express-jwt");
 const md5 = require("md5");
+const session = require("express-session");
 const { ForbiddenError, ServiceError } = require("./utils/error");
 
 // 加载环境变量
@@ -24,12 +25,22 @@ const adminRouter = require("./routes/admin");
 // 创建express实例
 const app = express();
 
+// 使用express-session中间件
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: true,
+    saveUninitialized: true,
+    cookie: { secure: false, maxAge: 1000 * 60 * 60 * 24 * 30 },
+  })
+);
+
 // 使用jwt中间件
 app.use(
   jwt({
     secret: md5(process.env.JWT_SECRET),
     algorithms: ["HS256"],
-  }).unless({ path: ["/api/admin/login"] })
+  }).unless({ path: ["/api/admin/login", "/api/admin/captcha"] })
 );
 
 // view engine setup
