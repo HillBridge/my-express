@@ -1,4 +1,5 @@
 const adminModel = require("./model/adminModel");
+const bannerModel = require("./model/bannerModel");
 const sequelize = require("./dbConnect");
 const md5 = require("md5");
 
@@ -21,5 +22,28 @@ const md5 = require("md5");
     console.log("初始化超级管理员成功...");
   }
 
+  const bannerCount = await bannerModel.count();
+  console.log("bannerCount", bannerCount);
+  if (bannerCount === 0) {
+    // 批量创建数据
+    await bannerModel.bulkCreate([
+      {
+        title: "banner1",
+        description: "banner1",
+        link: "../public/images/banner/AR.webp",
+      },
+      {
+        title: "banner2",
+        description: "banner2",
+        link: "../public/images/banner/AT.webp",
+      },
+      {
+        title: "banner3",
+        description: "banner3",
+        link: "../public/images/banner/AU.webp",
+      },
+    ]);
+    console.log("初始化banner数据成功...");
+  }
   console.log("数据库初始化完成...");
 })();
