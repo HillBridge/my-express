@@ -4,6 +4,12 @@ const sequelize = require("../dbConnect");
 module.exports = sequelize.define(
   "Banner",
   {
+    id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      primaryKey: true,
+      autoIncrement: true,
+    },
     link: {
       type: DataTypes.STRING,
       allowNull: false,

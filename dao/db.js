@@ -23,7 +23,6 @@ const md5 = require("md5");
   }
 
   const bannerCount = await bannerModel.count();
-  console.log("bannerCount", bannerCount);
   if (bannerCount === 0) {
     // 批量创建数据
     await bannerModel.bulkCreate([

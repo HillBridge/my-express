@@ -1,5 +1,10 @@
 const md5 = require("md5");
-const { bannerDao, updateBannerDao } = require("../dao/bannerDao");
+const {
+  bannerDao,
+  createBannerDao,
+  updateBannerDao,
+  deleteBannerDao,
+} = require("../dao/bannerDao");
 
 const getBannerService = async () => {
   const result = await bannerDao();
@@ -10,8 +15,21 @@ const getBannerService = async () => {
   return dataArr;
 };
 
+const createBannerService = async (bannerData) => {
+  return await createBannerDao(bannerData);
+};
+
 const updateBannerService = async (bannerData) => {
   return await updateBannerDao(bannerData);
 };
 
-module.exports = { getBannerService, updateBannerService };
+const deleteBannerService = async (bannerData) => {
+  return await deleteBannerDao(bannerData);
+};
+
+module.exports = {
+  getBannerService,
+  updateBannerService,
+  deleteBannerService,
+  createBannerService,
+};
