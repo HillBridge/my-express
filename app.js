@@ -75,7 +75,6 @@ app.use(function (err, req, res, next) {
   if (err.name === "UnauthorizedError") {
     res.json(new ForbiddenError("token无效或者已过期").toResponseJson());
   } else if (err instanceof ServiceError) {
-    console.log("err", err);
     res.json(err.toResponseJson());
   } else {
     next(err);
