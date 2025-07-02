@@ -1,9 +1,22 @@
 const adminModel = require("./model/adminModel");
 const bannerModel = require("./model/bannerModel");
+const blogTypeModel = require("./model/blogTypeModel");
+const blogModel = require("./model/blogModel");
 const sequelize = require("./dbConnect");
 const md5 = require("md5");
 
 (async () => {
+  // 关联博客类型与博客之间的关系, 博客类型可以有多个博客, 博客属于一个博客类型
+  blogTypeModel.hasMany(blogModel, {
+    foreignKey: "categoryId",
+    sourceKey: "id",
+  });
+  blogModel.belongsTo(blogTypeModel, {
+    foreignKey: "categoryId",
+    targetKey: "id",
+    as: "category",
+  });
+
   // 数据模型同步
   await sequelize.sync({
     alter: true,
@@ -44,5 +57,28 @@ const md5 = require("md5");
     ]);
     console.log("初始化banner数据成功...");
   }
+
+  const blogCount = await blogTypeModel.count();
+  if (blogCount === 0) {
+    await blogTypeModel.bulkCreate([
+      {
+        name: "html",
+        articleCount: 10,
+        order: 1,
+      },
+      {
+        name: "css",
+        articleCount: 10,
+        order: 2,
+      },
+      {
+        name: "javascript",
+        articleCount: 10,
+        order: 3,
+      },
+    ]);
+    console.log("初始化博客数据成功...");
+  }
+
   console.log("数据库初始化完成...");
 })();
