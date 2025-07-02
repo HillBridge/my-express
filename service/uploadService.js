@@ -1,6 +1,25 @@
 const multer = require("multer");
-const { formatResponse, upload } = require("../utils/tool");
+const path = require("path");
+const { formatResponse } = require("../utils/tool");
 const { UploadError } = require("../utils/error");
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "public/uploads/");
+  },
+  filename: function (req, file, cb) {
+    const newName =
+      path.basename(file.originalname, path.extname(file.originalname)) +
+      Date.now() +
+      path.extname(file.originalname);
+    cb(null, newName);
+  },
+});
+
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 5 * 1024 * 1024, files: 1 },
+}).single("file");
 
 const uploadService = async (req, res, next) => {
   upload(req, res, function (err) {
@@ -14,7 +33,7 @@ const uploadService = async (req, res, next) => {
         next(new UploadError("上传失败"));
       }
     } else {
-      res.json(formatResponse(200, "上传成功", req.file.path));
+      res.json(formatResponse(200, "上传成功"));
     }
   });
 };

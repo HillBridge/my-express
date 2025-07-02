@@ -58,8 +58,8 @@ const md5 = require("md5");
     console.log("初始化banner数据成功...");
   }
 
-  const blogCount = await blogTypeModel.count();
-  if (blogCount === 0) {
+  const blogTypeCount = await blogTypeModel.count();
+  if (blogTypeCount === 0) {
     await blogTypeModel.bulkCreate([
       {
         name: "html",

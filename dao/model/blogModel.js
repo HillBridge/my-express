@@ -36,14 +36,10 @@ module.exports = sequelize.define(
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    createTime: {
-      type: DataTypes.DATE,
-      allowNull: false,
-    },
   },
   {
     freezeTableName: true,
-    createdAt: false,
+    createdAt: true,
     updatedAt: false,
   }
 );

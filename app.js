@@ -23,6 +23,7 @@ const usersRouter = require("./routes/users");
 const adminRouter = require("./routes/admin");
 const bannerRouter = require("./routes/banner");
 const uploadRouter = require("./routes/upload");
+const blogRouter = require("./routes/blog");
 
 // 创建express实例
 const app = express();
@@ -62,6 +63,7 @@ app.use("/users", usersRouter);
 app.use("/api/admin", adminRouter);
 app.use("/api/banner", bannerRouter);
 app.use("/api/upload", uploadRouter);
+app.use("/api/blog", blogRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -73,6 +75,7 @@ app.use(function (err, req, res, next) {
   if (err.name === "UnauthorizedError") {
     res.json(new ForbiddenError("token无效或者已过期").toResponseJson());
   } else if (err instanceof ServiceError) {
+    console.log("err", err);
     res.json(err.toResponseJson());
   } else {
     next(err);
