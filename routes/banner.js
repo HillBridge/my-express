@@ -8,22 +8,22 @@ const {
   deleteBannerService,
 } = require("../service/bannerService");
 
-router.get("/banner", async function (req, res, next) {
+router.get("/", async function (req, res, next) {
   const result = await getBannerService();
   res.json(formatResponse(200, "获取banner成功", result));
 });
 
-router.post("/banner", async function (req, res, next) {
+router.post("/", async function (req, res, next) {
   const result = await createBannerService(req.body);
   res.json(formatResponse(200, "创建banner成功", result));
 });
 
-router.put("/banner", async function (req, res, next) {
+router.put("/", async function (req, res, next) {
   const result = await updateBannerService(req.body);
   res.json(formatResponse(200, "更新banner成功", result));
 });
 
-router.delete("/banner", async function (req, res, next) {
+router.delete("/", async function (req, res, next) {
   const result = await deleteBannerService(req.body);
   res.json(formatResponse(200, "删除banner成功", result));
 });

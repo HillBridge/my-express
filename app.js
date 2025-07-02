@@ -22,6 +22,7 @@ const usersRouter = require("./routes/users");
 // 加载路由API
 const adminRouter = require("./routes/admin");
 const bannerRouter = require("./routes/banner");
+const uploadRouter = require("./routes/upload");
 
 // 创建express实例
 const app = express();
@@ -59,7 +60,8 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use("/api/admin", adminRouter);
-app.use("/api", bannerRouter);
+app.use("/api/banner", bannerRouter);
+app.use("/api/upload", uploadRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
